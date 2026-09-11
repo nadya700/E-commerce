@@ -1,0 +1,7 @@
+{
+  "name": "Mavi Geyim Mağazası",
+  "description": "Mavi tonlarda dizayn edilmiş, tam funksional geyim mağazası və elektron ticarət platforması (məhsullar, səbət, sifarişlər, istifadəçi hesabı və Laravel backend arxitekturası).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
