@@ -46,12 +46,12 @@ export const LaravelModal: React.FC<LaravelModalProps> = ({ isOpen, onClose }) =
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-white">Laravel 11 Backend Arxitekturası</h2>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider bg-blue-900/80 text-blue-300 px-2 py-0.5 rounded-md border border-blue-700/50">
-                  Task 4 Full-Stack
+                <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-900/80 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-700/50">
+                  GitHub-a Əlavə Edildi (/laravel-backend)
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Geyim mağazasının API, verilənlər bazası miqrasiyaları, Eloquent modelləri və nəzarətçiləri
+                Geyim mağazasının API, verilənlər bazası miqrasiyaları, Eloquent modelləri və nəzarətçiləri birbaşa repozitoriyada saxlanılır
               </p>
             </div>
           </div>
