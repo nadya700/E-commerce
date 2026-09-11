@@ -161,6 +161,33 @@ class OrderController extends Controller
     }
 
     /**
+     * Sifariş Qaiməsi (Invoice Data & PDF Metadata)
+     */
+    public function invoice(Request $request, Order $order)
+    {
+        if ($order->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
+            return response()->json(['status' => 'error', 'message' => 'Giriş qadağandır'], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'invoice_number' => 'INV-' . $order->order_number,
+                'order' => $order->load(['items.product', 'user']),
+                'company' => [
+                    'name' => 'MAVI BOUTIQUE MMC',
+                    'voen' => '1402894121',
+                    'address' => 'Bakı ş., Nizami küç. 100',
+                    'phone' => '+994 12 555 20 26',
+                    'email' => 'info@mavi.az',
+                    'website' => 'https://mavi.az'
+                ],
+                'download_url' => url("/api/v1/orders/{$order->id}/invoice/pdf")
+            ]
+        ]);
+    }
+
+    /**
      * Admin Paneli üçün ümumi statistika
      */
     public function adminStats()

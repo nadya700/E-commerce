@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, User, Package, MapPin, ShieldCheck, LogOut, CheckCircle } from 'lucide-react';
+import { X, User, Package, MapPin, ShieldCheck, LogOut, CheckCircle, FileText, Download, Eye } from 'lucide-react';
 import { UserProfile, Order } from '../types';
+import { generateInvoicePdf } from '../utils/generateInvoicePdf';
+import { InvoiceModal } from './InvoiceModal';
 
 interface UserAccountModalProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
   onSwitchRole,
 }) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'orders'>('orders');
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<Order | null>(null);
 
   if (!isOpen) return null;
 
@@ -122,9 +125,31 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
                       ))}
                     </div>
 
-                    <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-xs">
+                    <div className="pt-2 border-t border-slate-200 flex flex-wrap justify-between items-center gap-2 text-xs">
                       <span className="text-slate-500">Çatdırılma: {ord.shippingAddress.city}, {ord.shippingAddress.address}</span>
-                      <span className="text-sm font-extrabold text-blue-900">Yekun: {ord.total.toFixed(2)} ₼</span>
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-sm font-extrabold text-blue-900">Yekun: {ord.total.toFixed(2)} ₼</span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedInvoiceOrder(ord)}
+                            title="Qaiməyə bax"
+                            className="px-2 py-1 text-[11px] font-semibold text-slate-700 hover:text-blue-700 bg-white hover:bg-blue-50 border border-slate-200 rounded-lg flex items-center gap-1 transition-colors"
+                          >
+                            <Eye className="w-3 h-3" />
+                            <span>Bax</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => generateInvoicePdf(ord, true)}
+                            title="PDF Qaiməni Yüklə"
+                            className="px-2.5 py-1 text-[11px] font-bold text-blue-700 hover:text-white bg-blue-50 hover:bg-blue-600 border border-blue-200 rounded-lg flex items-center gap-1 transition-all"
+                          >
+                            <Download className="w-3 h-3" />
+                            <span>PDF Qaimə</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -179,6 +204,15 @@ export const UserAccountModal: React.FC<UserAccountModalProps> = ({
           )}
         </div>
       </div>
+
+      {/* Invoice Viewer Modal */}
+      {selectedInvoiceOrder && (
+        <InvoiceModal
+          isOpen={Boolean(selectedInvoiceOrder)}
+          onClose={() => setSelectedInvoiceOrder(null)}
+          order={selectedInvoiceOrder}
+        />
+      )}
     </div>
   );
 };

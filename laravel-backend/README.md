@@ -93,6 +93,7 @@ laravel-backend/
 | **GET** | `/api/v1/auth/me` | Cari autentifikasiya olunmuş istifadəçi | `Bearer Token` |
 | **GET** | `/api/v1/orders` | İstifadəçinin sifariş tarixçəsi | `Bearer Token` |
 | **POST** | `/api/v1/orders/checkout` | Sifarişin rəsmiləşdirilməsi (Pessimistic Lock & Stok çıxışı) | `Bearer Token` |
+| **GET** | `/api/v1/orders/{id}/invoice` | Sifariş qaiməsi (PDF Faktura məlumatları və rekvizitləri) | `Bearer Token` |
 | **POST** | `/api/v1/products` | Yeni məhsul əlavə etmək | `Admin` |
 | **PUT** | `/api/v1/products/{id}` | Məhsul məlumatlarını və stok sayını yeniləmək | `Admin` |
 | **DELETE** | `/api/v1/products/{id}` | Məhsulu silmək | `Admin` |

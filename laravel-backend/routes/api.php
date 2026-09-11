@@ -47,6 +47,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/orders', [OrderController::class, 'index']);
         Route::post('/orders/checkout', [OrderController::class, 'checkout']);
         Route::get('/orders/{order}', [OrderController::class, 'show']);
+        Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice']);
 
         // Step 2: Product & Order Management (Admin only)
         Route::middleware('can:manage-products')->group(function () {

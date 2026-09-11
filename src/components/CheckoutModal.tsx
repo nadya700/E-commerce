@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, CreditCard, Banknote, ShieldCheck, ArrowRight } from 'lucide-react';
+import { X, CheckCircle, CreditCard, Banknote, ShieldCheck, ArrowRight, FileText, Download, Eye, Sparkles } from 'lucide-react';
 import { CartItem, ShippingAddress, Order } from '../types';
+import { generateInvoicePdf } from '../utils/generateInvoicePdf';
+import { InvoiceModal } from './InvoiceModal';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -36,6 +38,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash'>('card');
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [invoiceAutoDownloaded, setInvoiceAutoDownloaded] = useState(false);
+  const [showInvoicePreview, setShowInvoicePreview] = useState(false);
 
   if (!isOpen) return null;
 
@@ -57,6 +61,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       });
       setCompletedOrder(order);
       setIsSubmitting(false);
+
+      // Sifariş təsdiq edildikdən sonra avtomatik olaraq PDF formatında 'Sifariş qaiməsi' (invoice) generasiya və yüklənməsi
+      setTimeout(() => {
+        try {
+          generateInvoicePdf(order, true);
+          setInvoiceAutoDownloaded(true);
+        } catch (error) {
+          console.error('Invoice PDF auto-generation error:', error);
+        }
+      }, 400);
     }, 600);
   };
 
@@ -128,9 +142,54 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
             </div>
 
+            {/* Sifariş Qaiməsi (PDF Invoice) Card */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-900 to-indigo-950 text-white text-left shadow-lg space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 shrink-0">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-blue-200">
+                        Sifariş Qaiməsi (Elektron Faktura)
+                      </h4>
+                      {invoiceAutoDownloaded && (
+                        <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-semibold">
+                          <CheckCircle className="w-3 h-3" /> Avtomatik Yükləndi
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-blue-100/80 mt-0.5">
+                      Rəsmi PDF sənədi tərtib edildi: <span className="font-mono text-white">Mavi_Boutique_Qaime_{completedOrder.orderNumber}.pdf</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-1 border-t border-blue-800/60">
+                <button
+                  type="button"
+                  onClick={() => generateInvoicePdf(completedOrder, true)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>PDF Qaiməni Yüklə</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowInvoicePreview(true)}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 transition-colors border border-white/10"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Qaiməyə Canlı Baxış</span>
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-600/20 transition-all"
+              className="w-full sm:w-auto px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-all"
             >
               Alış-Verişə Davam Et
             </button>
@@ -319,6 +378,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </form>
         )}
       </div>
+
+      {/* Full Interactive Invoice Viewer */}
+      {completedOrder && (
+        <InvoiceModal
+          isOpen={showInvoicePreview}
+          onClose={() => setShowInvoicePreview(false)}
+          order={completedOrder}
+        />
+      )}
     </div>
   );
 };
